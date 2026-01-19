@@ -1,0 +1,11 @@
+room_id,type,price,status,cleaning_status
+R1,Single,100,Available,Dirty
+R2,Single,100,Reserved,Clean
+R3,Double,150,Available,Dirty
+R4,Deluxe,300,Occupied,Clean
+R5,Double,150,Available,Clean
+R6,Double,200,Available,Clean
+R7,Deluxe,350,Available,Clean
+R8,Deluxe,300,Available,Clean
+R9,Double,150,Available,Clean
+R10,Single,145.5,Available,Clean

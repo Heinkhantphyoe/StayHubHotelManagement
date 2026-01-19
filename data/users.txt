@@ -1,0 +1,5 @@
+username,password,role,full_name
+manager,admin123,Manager,Alice Manager
+recept,user123,Receptionist,Bob FrontDesk
+acc,money123,Accountant,Charlie Finance
+house,clean123,Housekeeping,Dave Cleaner
