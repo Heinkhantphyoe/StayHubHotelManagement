@@ -6,7 +6,10 @@ import data_handler
 # ------------------------------
 
 
-def record_guest_payment(payments, bookings):
+def record_guest_payment():
+    payments = data_handler.read_data(data_handler.FILE_PAYMENTS)
+    bookings = data_handler.read_data(data_handler.FILE_BOOKINGS)
+
     book_id = input("Enter Booking ID for payment: ")
     booking = data_handler.find_record_by_id(bookings, "booking_id", book_id)
 
@@ -37,7 +40,9 @@ def record_guest_payment(payments, bookings):
         print("Error: Booking ID not found.")
 
 
-def generate_income_report(payments):
+def generate_income_report():
+    payments = data_handler.read_data(data_handler.FILE_PAYMENTS)   
+
     start_date = input("Enter Start Date (YYYY-MM-DD): ")
     while not data_handler.is_valid_date(start_date):
         print("\nError: Invalid date format.Please use YYYY-MM-DD format.")
@@ -62,7 +67,11 @@ def generate_income_report(payments):
 
 # This report identifies bookings that require payment by comparing booking records with payment records.
 # Cancelled and pending bookings are excluded,
-def generate_outstanding_report(bookings, payments):
+def generate_outstanding_report():
+
+    bookings = data_handler.read_data(data_handler.FILE_BOOKINGS)
+    payments = data_handler.read_data(data_handler.FILE_PAYMENTS)   
+
     total_owed = 0.0
 
     print("\n--- OUTSTANDING PAYMENTS REPORT ---")
@@ -93,32 +102,6 @@ def generate_outstanding_report(bookings, payments):
     print(f"TOTAL OUTSTANDING AMOUNT: RM {total_owed:.2f}")
 
 
-# def generate_monthly_summary(payments):
-#     target_month = input("Enter Month to summarize (YYYY-MM): ")
-
-#     # Validate input
-#     try:
-#         datetime.strptime(target_month, "%Y-%m")
-#     except ValueError:
-#         print("Invalid month format! Use YYYY-MM.")
-#         return
-
-#     monthly_total = 0.0
-
-#     for p in payments:
-#         try:
-#             payment_date = datetime.strptime(p["date"], "%Y-%m-%d")
-#             if payment_date.year == int(target_month[:4]) and payment_date.month == int(target_month[5:7]):
-#                 monthly_total += float(p["amount"])
-#         except ValueError:
-#             print(f"Skipping invalid date: {p['date']}")
-#             continue
-
-#     print(f"\n--- FINANCIAL SUMMARY FOR {target_month} ---")
-#     print(f"TOTAL REVENUE FOR MONTH: {monthly_total:.2f}")
-#     print("--------------------------------------")
-
-
 def get_valid_month():
     while True:
         target_month = input("Enter Month to summarize (YYYY-MM): ")
@@ -130,28 +113,75 @@ def get_valid_month():
             print("Invalid month format! Please enter in YYYY-MM format.")
 
 
-def generate_monthly_summary(payments):
-    """
-    Simple monthly summary: only total revenue.
-    """
+def generate_monthly_summary():
+    print("\n--- MONTHLY FINANCIAL REPORT ---")
+    payments = data_handler.read_data(data_handler.FILE_PAYMENTS)
+
     target_month = get_valid_month()
+        
+    if not payments:
+        print("No payment records found in system.")
+        return
+
+    # Initialize Counters
     total_revenue = 0.0
+    transaction_count = 0
+    method_breakdown = {} # Dictionary to store totals like {'Cash': 500, 'Card': 200}
+    monthly_transactions = [] # List to store just this month's payments to print later
 
+    # 2. Process Data
     for p in payments:
-        if p["date"].startswith(target_month):
-            total_revenue += float(p.get("amount", 0))
+        # Check if date matches (e.g., "2025-12-01" starts with "2025-12")
+        if p['date'].startswith(target_month):
+            amount = float(p['amount'])
+            method = p.get('method', 'Unknown') # Default to 'Unknown' if missing
+            
+            # Update Totals
+            total_revenue += amount
+            transaction_count += 1
+            
+            # Update Method Breakdown
+            if method in method_breakdown:
+                method_breakdown[method] += amount
+            else:
+                method_breakdown[method] = amount
+            
+            # Add to list for the ledger table
+            monthly_transactions.append(p)
 
-    print(f"\n--- TOTAL REVENUE FOR {target_month} ---")
-    print(f"Total Revenue: RM {total_revenue:.2f}")
-    print("--------------------------------------")
+    if transaction_count == 0:
+        print(f"No transactions found for {target_month}.")
+        return
 
+    # 3. Print Detailed Ledger Table
+    print(f"\nDetailed Ledger for {target_month}")
+    print(f"{'Date':<12} {'Pay ID':<10} {'Booking':<10} {'Method':<10} {'Amount (RM)'}")
+    print("-" * 60)
+    
+    for t in monthly_transactions:
+        print(f"{t['date']:<12} {t['payment_id']:<10} {t['booking_id']:<10} {t.get('method','-'):<10} {float(t['amount']):.2f}")
+        
+    print("-" * 60)
+
+    # 4. Print Summaries
+    print(f"\nSUMMARY STATISTICS")
+    print(f"Total Transactions: {transaction_count}")
+    
+    print("\nREVENUE BY METHOD:")
+    if not method_breakdown:
+        print("  No method data available.")
+    else:
+        for method, amt in method_breakdown.items():
+            print(f"  {method:<10}: RM {amt:.2f}")
+
+    print("=" * 30)
+    print(f"TOTAL REVENUE:    RM {total_revenue:.2f}")
+    print("=" * 30)
 
 # ------------------------------
 # Main Accountant Menu
 # ------------------------------
 def show_menu():
-    payments = data_handler.read_data(data_handler.FILE_PAYMENTS)
-    bookings = data_handler.read_data(data_handler.FILE_BOOKINGS)
 
     while True:
         print("\n--- ACCOUNTANT MAIN MENU ---")
@@ -164,13 +194,13 @@ def show_menu():
         choice = input("Enter choice (1-5): ")
 
         if choice == "1":
-            record_guest_payment(payments, bookings)
+            record_guest_payment()
         elif choice == "2":
-            generate_income_report(payments)
+            generate_income_report()
         elif choice == "3":
-            generate_outstanding_report(bookings, payments)
+            generate_outstanding_report()
         elif choice == "4":
-            generate_monthly_summary(payments)
+            generate_monthly_summary()
         elif choice == "5":
             print("Returning to Main Menu...")
             break

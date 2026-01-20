@@ -102,14 +102,6 @@ def is_valid_price(price_str):
     except (ValueError, TypeError):
         return False
 
-def is_valid_integer(value_str):
-    """Validates if a string is a valid positive integer."""
-    try:
-        value = int(value_str)
-        return value > 0
-    except (ValueError, TypeError):
-        return False
-
 
 def is_valid_date(date_str):
     """Check only YYYY-MM-DD format."""
@@ -127,13 +119,6 @@ def find_record_by_id(data_list, id_field, id_value):
             return record
     return None
 
-def find_all_by_field(data_list, field_name, field_value):
-    """Finds all records where field matches value."""
-    results = []
-    for record in data_list:
-        if record.get(field_name) == field_value:
-            results.append(record)
-    return results
 
 def check_valid_email(email):
     """Basic email format validation."""

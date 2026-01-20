@@ -1,8 +1,6 @@
 import os
 import time
-import data_handler  # Your helper file
-# Import the module for each group member
-# Note: You must create these files for this to work!
+import data_handler
 import manager_ops
 import receptionist_ops
 import accountant_ops

@@ -50,14 +50,21 @@ def update_maintenance_issue():
 
     rooms = data_handler.read_data(data_handler.FILE_ROOMS)
 
-    print("Current Rooms in Maintenance:")
-    print("---------------------------------")
+    # Filter rooms in maintenance
+    maintenance_rooms = [room for room in rooms if room["status"] == "Maintenance"]
 
-    for room in rooms:
-        if room["status"] == "Maintenance":
-            print(f"Room ID: {room['room_id']} | Type: {room['type']}")
+    if maintenance_rooms:
+        print("Current Rooms in Maintenance:")
+        print(f'{"Room ID":<10} {"Type":<15}')
+        print("-" * 25)
 
-    print("---------------------------------")
+        for room in maintenance_rooms:
+            print(f'{room["room_id"]:<10} {room["type"]:<15}')
+    else:
+        print("No rooms are currently under maintenance.")
+        return
+
+    print("-" * 25)
 
     target_id = input("Enter Room ID to set as Available: ")
     target_room = data_handler.find_record_by_id(rooms, "room_id", target_id)
@@ -71,15 +78,20 @@ def update_maintenance_issue():
         target_room["cleaning_status"] = "Dirty"
 
         data_handler.save_data(data_handler.FILE_ROOMS, rooms)
-        print(f"Success: Room {target_id} updated to Available. Need to Clean.")
+        print(f"Success: Room {target_id} updated to Available. Needs Cleaning.")
     else:
         print(f"Error: Room {target_id} is not currently in Maintenance.")
+
 
 def view_cleaning_schedule():
     rooms = data_handler.read_data(data_handler.FILE_ROOMS)
 
-    print("\nDAILY CLEANING SCHEDULE")
-    for room in rooms:
-        if room["cleaning_status"] != "Clean":
-            print(room["room_id"], room["type"], room["cleaning_status"])
+    dirty_rooms = [room for room in rooms if room["cleaning_status"] != "Clean"]
+
+    if dirty_rooms:  
+        print(f'{"Room ID":<10} {"Type":<15} {"Cleaning Status":<20}')
+        print("-" * 45)
+
+    for room in dirty_rooms:
+        print(f'{room["room_id"]:<10} {room["type"]:<15} {room["cleaning_status"]:<20}')
 
