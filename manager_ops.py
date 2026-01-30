@@ -65,63 +65,76 @@ def system_summary():
         print(f"Occupancy Rate: {(occupied/total_rooms)*100:.2f}%")
 
 def update_room():
-    """Update room details (type, price, status)."""
+    """Update room details (type, price, status, cleaning)"""
     print("\n--- UPDATE ROOM ---")
     room_id = input("Enter Room ID to update: ").strip()
-    
+
     rooms = data_handler.read_data(data_handler.FILE_ROOMS)
     target_room = data_handler.find_record_by_id(rooms, 'room_id', room_id)
-    
+
     if not target_room:
         print("Error: Room ID not found.")
         return
-    
-    print("\nWhat would you like to update?")
-    print("1. Room Type")
-    print("2. Price per Night")
-    print("3. Room Status")
-    print("4. Cleaning Status")
-    
-    choice = input("Enter choice: ").strip()
-    
-    if choice == '1':
-        new_type = input("Enter New Room Type (Single/Double/Deluxe): ").strip()
-        while new_type not in ['Single', 'Double', 'Deluxe']:
+
+    print("\nPress Enter to keep the current value.")
+
+    # --- Room Type ---
+    current_type = target_room.get("type", "")
+    new_type = input(f"Room Type (Single/Double/Deluxe) [{current_type}]: ").strip()
+    if new_type != "":
+        while new_type not in ["Single", "Double", "Deluxe"]:
             print("Error: Invalid room type. Please enter Single, Double, or Deluxe.")
-            new_type = input("Enter New Room Type (Single/Double/Deluxe): ").strip()
-        target_room['type'] = new_type
-        data_handler.save_data(data_handler.FILE_ROOMS, rooms)
-        print("Success: Room type updated.")
-    
-    elif choice == '2':
-        new_price = input("Enter New Price per Night: ").strip()
+            new_type = input(f"Room Type (Single/Double/Deluxe) [{current_type}]: ").strip()
+            if new_type == "":
+                new_type = None
+                break
+        if new_type:
+            target_room["type"] = new_type
+
+    # --- Price ---
+    current_price = target_room.get("price", "")
+    new_price = input(f"Price per Night [{current_price}]: ").strip()
+    if new_price != "":
         while not data_handler.is_valid_price(new_price):
             print("Error: Price must be a valid positive number.")
-            new_price = input("Enter New Price per Night: ").strip()
-        target_room['price'] = new_price
-        data_handler.save_data(data_handler.FILE_ROOMS, rooms)
-        print("Success: Room price updated.")
-    
-    elif choice == '3':
-        new_status = input("Enter New Status (Available/Occupied/Maintenance/Reserved): ").strip()
-        while new_status not in ['Available', 'Occupied', 'Maintenance', 'Reserved']:
+            new_price = input(f"Price per Night [{current_price}]: ").strip()
+            if new_price == "":
+                new_price = None
+                break
+        if new_price:
+            target_room["price"] = new_price
+
+    # --- Status ---
+    current_status = target_room.get("status", "")
+    new_status = input(f"Status (Available/Occupied/Maintenance/Reserved) [{current_status}]: ").strip()
+    if new_status != "":
+        while new_status not in ["Available", "Occupied", "Maintenance", "Reserved"]:
             print("Error: Status must be Available, Occupied, Maintenance, or Reserved.")
-            new_status = input("Enter New Status (Available/Occupied/Maintenance/Reserved): ").strip()
-        target_room['status'] = new_status
-        data_handler.save_data(data_handler.FILE_ROOMS, rooms)
-        print("Success: Room status updated.")
-    
-    elif choice == '4':
-        new_cleaning = input("Enter Cleaning Status (Clean/Dirty): ").strip()
-        while new_cleaning not in ['Clean', 'Dirty']:
+            new_status = input(
+                f"Status (Available/Occupied/Maintenance/Reserved) [{current_status}]: "
+            ).strip()
+            if new_status == "":
+                new_status = None
+                break
+        if new_status:
+            target_room["status"] = new_status
+
+    # --- Cleaning Status ---
+    current_clean = target_room.get("cleaning_status", "")
+    new_clean = input(f"Cleaning Status (Clean/Dirty) [{current_clean}]: ").strip()
+    if new_clean != "":
+        while new_clean not in ["Clean", "Dirty"]:
             print("Error: Cleaning status must be Clean or Dirty.")
-            new_cleaning = input("Enter Cleaning Status (Clean/Dirty): ").strip()
-        target_room['cleaning_status'] = new_cleaning
-        data_handler.save_data(data_handler.FILE_ROOMS, rooms)
-        print("Success: Cleaning status updated.")
-    
-    else:
-        print("Invalid choice.")
+            new_clean = input(f"Cleaning Status (Clean/Dirty) [{current_clean}]: ").strip()
+            if new_clean == "":
+                new_clean = None
+                break
+        if new_clean:
+            target_room["cleaning_status"] = new_clean
+
+    # Save data
+    data_handler.save_data(data_handler.FILE_ROOMS, rooms)
+    print("Success: Room updated.")
 
 def generate_daily_report():
     """Generate daily performance report."""
@@ -217,7 +230,7 @@ def show_menu():
         
         if choice == '1':
             rooms = data_handler.read_data(data_handler.FILE_ROOMS)
-            print(f"\n{'ID':<10} {'Type':<10} {'Price':<10} {'Status':<15} {'Cleaning'}")
+            print(f"\n{'ID':<10} {'Type':<10} {'Price':<10} {'Status':<15} {'Cleaning Status'}")
             print("-" * 60)
             for r in rooms:
                 print(f"{r['room_id']:<10} {r['type']:<10} {r['price']:<10} {r['status']:<15} {r['cleaning_status']}")

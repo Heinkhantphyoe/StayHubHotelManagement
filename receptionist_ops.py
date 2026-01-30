@@ -169,7 +169,6 @@ def book_room():
     print(f"SUCCESS: Room {assigned_room['room_id']} Reserved for {nights_int} nights.")
     print(f"Total Price: RM {total_cost:.2f}")
     print("-" * 40)
-    print("\n--- ADVANCE ROOM RESERVATION ---")
     
 
 # =========================
@@ -286,7 +285,7 @@ def check_in():
 
     elif has_booking == 'no':
         # --- PATH B: WALK-IN ---
-        # Calls the separate helper function for new guests
+        # Calls the walk_in_check_in helper function for new guests
         walk_in_check_in()
         
     else:

@@ -2,3 +2,4 @@ guest_id,username,password,full_name,phone,ic_passport,email
 G1,guest,123456789,John Doe,0123456789,A1234567,john@email.com
 G2,hein,123456,Hein Khant,451121212,B9876543,hein@gmail.com
 G3,myominhtut,123456,myo min htut,516516161616165,MJ4516516,myomin@gmail.com
+G4,heinthantzan,123456,Hein Thant Zan,011875624555,MJ896565,heinthantzan@gmail.com

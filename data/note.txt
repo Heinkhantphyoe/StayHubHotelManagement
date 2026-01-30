@@ -3,7 +3,7 @@ pending ==> user want to book but not yet payment_id
 confirm ==> user already paid but not check_in
 check_in ==> user arrived and stay at hotel
 check-out ==> user check_out and gone
-cancelledd ==> user make a booking and cancel before payment done
+cancelled ==> user make a booking and cancel before payment done
 
 
 =============room status============

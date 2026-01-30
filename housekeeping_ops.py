@@ -91,7 +91,25 @@ def view_cleaning_schedule():
     if dirty_rooms:  
         print(f'{"Room ID":<10} {"Type":<15} {"Cleaning Status":<20}')
         print("-" * 45)
+        for room in dirty_rooms:
+            print(f'{room["room_id"]:<10} {room["type"]:<15} {room["cleaning_status"]:<20}')
+    else: 
+        print("There are no rooms that need cleaning.")
 
-    for room in dirty_rooms:
-        print(f'{room["room_id"]:<10} {room["type"]:<15} {room["cleaning_status"]:<20}')
+def view_cleaning_schedule():
+    print("\n--- HOUSEKEEPING SCHEDULE ---")
+    rooms = data_handler.read_data(data_handler.FILE_ROOMS)
+
+    # Filter for rooms that are NOT clean
+    dirty_rooms = [room for room in rooms if room["cleaning_status"] != "Clean"]
+
+    if dirty_rooms:  
+        print(f'{"Room ID":<10} {"Type":<15} {"Cleaning Status":<20}')
+        print("-" * 45)
+
+        for room in dirty_rooms:
+            print(f'{room["room_id"]:<10} {room["type"]:<15} {room["cleaning_status"]:<20}')
+    else:
+        # message if all rooms are clean
+        print("Great job! All rooms are currently clean.")
 
